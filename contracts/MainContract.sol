@@ -11,8 +11,8 @@ contract MainContract {
        address contractAddress
     );
     
-    modifier onlyOwner(address addr) {
-        require(addr == owner);
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only Owner Allowed");
         _;
     }
 
@@ -29,11 +29,13 @@ contract MainContract {
     }
 
 	// deploy a new contract
-    function createContract(string name)
+    // pass in info to create token
+    // Name, Symbol, Decimals, Token supply,
+    function createContract(string name, string symbol, uint8 decimals, uint256 totalSupply)
     external
-    onlyOwner(msg.sender)
+    onlyOwner
     returns (address createNewContract) {
-        NewContract c = new NewContract(msg.sender, name);
+        NewContract c = new NewContract(msg.sender, name, symbol, decimals, totalSupply);
         contracts.push(c);
         lastContractAddress = address(c);
         emit newContractCreated(c);
@@ -45,6 +47,6 @@ contract MainContract {
     public
     view
     returns(address contractAddress) {
-        return address(contracts[pos]);
+        return contracts[pos];
     }
 }
